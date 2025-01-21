@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  #minio配置
+  minio:
+    url: http://127.0.0.1:9000 #ip地址
+    accessKey: dftmv2WS3SZEEqzDDffz #  账号
+    secretKey: mcI9XKLZDP67SsiozgS3Fu365kSBcRcBH39OQjHy #  密码
+    secure: false #如果是true，则用的是https而不是http,默认值是true
+    bucketName: "product"  # 桶的名字 相当于文件夹
+  web:
+    cors:
+      enabled: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/pestsews?useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none  # 可以是 update, create, create-drop, validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
