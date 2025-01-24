@@ -21,8 +21,8 @@ public class Device {
     @Column(name = "device_name", nullable = false)
     private String deviceName;
 
-    @Column(name = "device_type", nullable = false)
-    private String deviceType;
+    @Column(name = "traps_id", nullable = false)
+    private String trapsId;
 
     @Column(name = "location", nullable = false)
     private String location;
