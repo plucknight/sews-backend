@@ -4,14 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "admin")
-public class Admin {
+public class Admin   {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +31,7 @@ public class Admin {
     private String password; // 密码
 
     @Column(name = "role", nullable = false)
-    private int role; // 角色
+    private Integer role; // 角色
 
     @Column(name = "email")
     private String email; // 邮箱
@@ -38,4 +44,6 @@ public class Admin {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt; // 更新时间
+
+
 }

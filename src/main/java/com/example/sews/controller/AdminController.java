@@ -1,12 +1,19 @@
 package com.example.sews.controller;
 
 import com.example.sews.dto.Admin;
+import com.example.sews.dto.LoginUser;
 import com.example.sews.service.AdminService;
+import com.example.sews.utils.JwtUtil;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -16,6 +23,10 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> loginAdmin(@RequestParam String username, @RequestParam String password) {
+        return adminService.login(username, password);
+    }
     @PostMapping("/create")
     public ResponseEntity<Admin> createAdmin(@RequestBody Admin admin) {
         Admin savedAdmin = adminService.saveAdmin(admin);

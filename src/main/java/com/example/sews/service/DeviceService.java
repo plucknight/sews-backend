@@ -21,7 +21,7 @@ public class DeviceService {
 
     // 查询所有设备
     public List<Device> getAllDevices() {
-        return deviceRepository.findAll();
+        return deviceRepository.findAdminDeviceInfo();
     }
 
     // 根据设备ID查询设备
