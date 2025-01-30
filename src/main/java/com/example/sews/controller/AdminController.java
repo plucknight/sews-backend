@@ -4,7 +4,9 @@ import com.example.sews.dto.Admin;
 import com.example.sews.dto.LoginUser;
 import com.example.sews.service.AdminService;
 import com.example.sews.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,8 +26,8 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> loginAdmin(@RequestParam String username, @RequestParam String password) {
-        return adminService.login(username, password);
+    public ResponseEntity<Map<String, String>> loginAdmin(@RequestBody Map<String, String> credentials) {
+        return adminService.login(credentials.get("username"), credentials.get("password"));
     }
     @PostMapping("/create")
     public ResponseEntity<Admin> createAdmin(@RequestBody Admin admin) {
@@ -33,9 +35,17 @@ public class AdminController {
         return ResponseEntity.ok(savedAdmin);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Admin> getAdminById(@PathVariable Long id) {
-        Optional<Admin> admin = adminService.findById(id);
+    @GetMapping("/id")
+    public ResponseEntity<Admin> getAdminById(HttpServletRequest request)  {
+        String token = request.getHeader("token");
+        String adminId;
+        try{
+            Claims claims = JwtUtil.parseJWT(token);
+            adminId = claims.getSubject();
+        }catch (Exception e){
+            throw new RuntimeException("Invalid token");
+        }
+        Optional<Admin> admin = adminService.findById(Long.valueOf(adminId));
         return admin.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 

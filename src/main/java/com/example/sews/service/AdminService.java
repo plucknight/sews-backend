@@ -22,8 +22,7 @@ public class AdminService {
     private AdminRepository adminRepository;
 
     public ResponseEntity<Map<String, String>>    login (String username, String password) {
-        System.out.println("username = " + username+" password = "+password);
-
+//        System.out.println("username = " + username+" password = "+password);
         Admin admin   = adminRepository.findByUsername(username);
         if (admin == null || !password.equals(admin.getPassword())) {
             return ResponseEntity.notFound().build();
@@ -41,11 +40,15 @@ public class AdminService {
     }
 
     public Optional<Admin> findById(Long id) {
-        return adminRepository.findById(id);
+        Optional<Admin> admin=adminRepository.findById(id);
+        admin.get().setPassword("******");
+        return admin;
     }
 
     public Admin findByUsername(String username) {
-        return adminRepository.findByUsername(username);
+        Admin admin=adminRepository.findByUsername(username);
+        admin.setPassword("******");
+        return admin;
     }
 
     public Admin updateAdmin(Admin admin) {
@@ -57,6 +60,8 @@ public class AdminService {
     }
 
     public List<Admin> getAllAdmin()  {
-        return adminRepository.findAll();
+        List<Admin> admins = adminRepository.findAll();
+        admins.forEach(admin -> admin.setPassword("******"));
+        return admins;
     }
 }
