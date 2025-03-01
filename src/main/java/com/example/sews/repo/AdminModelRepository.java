@@ -1,7 +1,6 @@
 package com.example.sews.repo;
 
 import com.example.sews.dto.AdminModel;
-import com.example.sews.dto.vo.AdminModelInfoDTO;
 import com.example.sews.dto.vo.AdminPermissionDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -1,7 +1,7 @@
 package com.example.sews.service;
 
-import com.example.sews.dto.ShortTermPredictionInput;
 import com.example.sews.dto.PeakDayPredictionInput;
+import com.example.sews.dto.ShortTermPredictionInput;
 import org.springframework.stereotype.Service;
 
 @Service

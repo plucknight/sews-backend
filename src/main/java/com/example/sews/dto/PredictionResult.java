@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "prediction_results") // 映射到 prediction_results 表
-public class PredictionResultDTO {
+public class PredictionResult {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

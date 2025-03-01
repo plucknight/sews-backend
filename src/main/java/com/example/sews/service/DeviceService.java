@@ -1,7 +1,7 @@
 package com.example.sews.service;
 
-import com.example.sews.repo.DeviceRepository;
 import com.example.sews.dto.Device;
+import com.example.sews.repo.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ public class DeviceService {
     }
 
     // 查询所有设备
-    public List<Device> getAllDevices() {
+    public List<com.example.sews.dto.vo.AdminDeviceInfoDTO> getAllDevices() {
         return deviceRepository.findAdminDeviceInfo();
     }
 
@@ -29,5 +29,8 @@ public class DeviceService {
         System.out.println(deviceId);
         Optional<Device> device = Optional.ofNullable(deviceRepository.findByDeviceId(Integer.valueOf(deviceId)));
         return device.orElse(null);
+    }
+    public void deleteDeviceById(int deviceId) {
+        deviceRepository.deleteById(Integer.valueOf(deviceId));
     }
 }

@@ -36,15 +36,6 @@ public class Device {
     @Column(name = "crop_type", nullable = false)
     private String cropType;
 
-    @Column(name = "admin_name", nullable = false)
-    private String adminName;
-
-    @Column(name = "admin_id")
-    private Integer adminId;
-
-    @Column(name = "admin_phone")
-    private String adminPhone;
-
     @Column(name = "install_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date installTime;

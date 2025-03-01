@@ -1,11 +1,14 @@
 package com.example.sews.controller;
 
-import com.example.sews.dto.ShortTermPredictionInput;
 import com.example.sews.dto.PeakDayPredictionInput;
+import com.example.sews.dto.ShortTermPredictionInput;
 import com.example.sews.service.PredictionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/prediction")

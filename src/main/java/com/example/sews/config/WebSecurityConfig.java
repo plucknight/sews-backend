@@ -84,7 +84,7 @@ public class WebSecurityConfig {
 				// 下面开始设置权限
 				.authorizeHttpRequests(authorizeHttpRequest -> authorizeHttpRequest
 						// 放行 /admin/login 和 /map 路径
-						.requestMatchers("/admin/login", "/map").permitAll()
+						.requestMatchers("/admin/login", "/map","/prediction-results/getAll").permitAll()
 						// 允许所有 OPTIONS 请求
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						// 普通管理员可以访问 /devices/** 和 /model/**

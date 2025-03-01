@@ -1,6 +1,5 @@
 package com.example.sews.service;
 
-import com.example.sews.dto.vo.AdminModelInfoDTO;
 import com.example.sews.dto.vo.AdminPermissionDto;
 import com.example.sews.repo.AdminModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;

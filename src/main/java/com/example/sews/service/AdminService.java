@@ -1,19 +1,16 @@
 package com.example.sews.service;
 
 import com.example.sews.dto.Admin;
-import com.example.sews.dto.LoginUser;
 import com.example.sews.repo.AdminRepository;
 import com.example.sews.utils.JwtUtil;
-import jakarta.servlet.http.Cookie;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AdminService {
