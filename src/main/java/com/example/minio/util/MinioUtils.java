@@ -7,6 +7,9 @@ import io.minio.errors.*;
 import io.minio.http.Method;
 import lombok.SneakyThrows;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,10 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -195,7 +197,49 @@ public class MinioUtils {
         return null;
     }
 
+    public void uploadImageToMinio(Mat resultImage, String imageUrl) {
+        try {
+            // 如果 imageUrl 中不包含协议，则假定其为文件名，需要自动补全 base URL
 
+            URL url = new URL(imageUrl);
+            String path = url.getPath();  // 如 "/product/tao_li2.jpg"
+            String fileName = path.substring(path.lastIndexOf('/') + 1); // 提取 "tao_li2.jpg"
+            int dotIndex = fileName.lastIndexOf(".");
+            String nameWithoutExt = (dotIndex == -1) ? fileName : fileName.substring(0, dotIndex);
+            String extension = (dotIndex == -1) ? ".jpg" : fileName.substring(dotIndex);
+            String newFileName = nameWithoutExt + "(Recognize)" + extension;
+
+            // 将 Mat 转换为 JPEG 格式的字节数组
+            MatOfByte mob = new MatOfByte();
+            Imgcodecs.imencode(".jpg", resultImage, mob);
+            byte[] imageBytes = mob.toArray();
+
+            // 指定上传到的 bucket 名称（这里假设 bucket 为 "Recognize"）
+            String bucketName = "Recognize";
+
+            // 如果 bucket 不存在则创建
+            boolean bucketExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+            if (!bucketExists) {
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+            }
+
+            // 调用 MinIO 的 putObject 方法上传图片
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(newFileName)
+                            .stream(new ByteArrayInputStream(imageBytes), imageBytes.length, -1)
+                            .contentType("image/jpeg")
+                            .build()
+            );
+
+            System.out.println("图片已上传到 MinIO，文件名：" + newFileName);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (Exception e) { // 包含 putObject 等操作可能抛出的异常
+            e.printStackTrace();
+        }
+    }
     /**
      * @param file     文件
      * @param fileName 文件名称

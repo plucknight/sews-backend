@@ -1,6 +1,7 @@
 package com.example.minio.controller;
 
 import com.example.minio.util.AjaxResult;
+import com.example.minio.util.MinioStaticUtils;
 import com.example.minio.util.MinioUtils;
 import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
@@ -25,7 +26,7 @@ import java.util.List;
  */
 @CrossOrigin
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/minio")
 public class MinioFileUploadController {
     @Autowired
     private MinioUtils minioUtils;
@@ -38,7 +39,7 @@ public class MinioFileUploadController {
 
     @Value("${spring.minio.bucketName}")
     private String bucketName;      // 注入桶名称
-    @GetMapping("/minio/images")
+    @GetMapping("/images")
     public List<String> getImageList() {
         List<String> imageUrls = new ArrayList<>();
         // 使用 MinIO 客户端列出桶内所有文件
@@ -66,15 +67,24 @@ public class MinioFileUploadController {
     }
     /**
      * @param file     文件
-     * @param fileName 文件名称
      * @Description 上传文件
      */
-    @GetMapping("/upload")
-    public AjaxResult uploadFile(@RequestParam("file") MultipartFile file, String fileName) {
-
-        minioUtils.upload(file, fileName);
-        System.out.println("上传成功"+ fileName);
-        return AjaxResult.success("上传成功");
+    @PostMapping("/upload")
+    public String uploadFile(@RequestParam("onnxFile") MultipartFile file) {
+        try {
+            // 获取原始文件名
+            String originalFileName = file.getOriginalFilename();
+            // 调用 MinIO 上传方法
+            MinioStaticUtils.uploadOnnxFileToMinio(file, originalFileName);
+            return "文件上传成功!";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "文件上传失败!";
+        }
+    }
+     @GetMapping("/test")
+    public String test() {
+        return "test";
     }
 
     /**
@@ -96,32 +106,4 @@ public class MinioFileUploadController {
         map.put("FileUrl",minioUtils.getFileUrl(fileName));
         return AjaxResult.success(map);
     }
-
-//
-//    public List<String> getImageList() {
-//        List<String> imageUrls = new ArrayList<>();
-//            // 使用 MinIO 客户端列出桶内所有文件
-//            ListObjectsArgs args = ListObjectsArgs.builder().bucket("product").build();
-//
-//            Iterable<Result<Item>> objects = minioClient.listObjects(args);
-//            for (Result<Item> result : objects) {
-//                try {
-//                    Item item = result.get(); // 获取实际对象
-//                    String fileName = item.objectName();
-//
-//                    // 只处理 .png 和 .jpg 文件
-//                    if (fileName.endsWith(".png") || fileName.endsWith(".jpg")) {
-//
-//                        String preSignedUrl = minioUtils.getPolicyUrl(fileName, Method.GET);
-//                        imageUrls.add(preSignedUrl); // 添加预签名 URL 到列表
-//                    }
-//                } catch (MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException e) {
-//                    // 捕获 MinioException 异常，处理获取文件时可能出现的错误
-//                    System.err.println("Error processing item: " + e.getMessage());
-//                }
-//            }
-//
-////        System.out.println("imageUrls = " + imageUrls);
-//        return imageUrls;
-//    }
 }

@@ -87,6 +87,7 @@ public class WebSecurityConfig {
 						.requestMatchers("/admin/login", "/map","/prediction-results/getAll").permitAll()
 						// 允许所有 OPTIONS 请求
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+//						.requestMatchers("/error").permitAll()
 						// 普通管理员可以访问 /devices/** 和 /model/**
 						.requestMatchers("/devices/**","/model/**","/monitor/**","/warning/**","/warningRules/**","/devicesMaintenance/**","/monitoringPhoto/**","/admin/username/**","/admin/id").hasRole("ADMIN")
 						// 超级管理员可以访问所有接口

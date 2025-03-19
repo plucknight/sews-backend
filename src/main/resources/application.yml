@@ -2,6 +2,7 @@ server:
   port: 8080
 
 spring:
+
   #minio配置
   minio:
     url: http://127.0.0.1:9000 #ip地址
@@ -14,8 +15,8 @@ spring:
       enabled: true
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 20MB
+      max-request-size: 20MB
 
   datasource:
     url: jdbc:mysql://localhost:3306/pestsews?useSSL=false&serverTimezone=Asia/Shanghai
