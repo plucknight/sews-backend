@@ -21,7 +21,6 @@ public class JwtUtil {
     public static final Long JWT_TTL = 60 * 60 * 1000L;
 
     // JWT 密钥明文，需确保密钥长度足够（至少 256 位）
-    public static final String JWT_KEY = "SEWS";
 
     /**
      * 生成 UUID，作为 JWT 的唯一标识
@@ -101,7 +100,7 @@ public class JwtUtil {
      */
     public static SecretKey generalKey() {
         // 将密钥字符串解码为字节数组
-        byte[] decodedKey = Base64.getDecoder().decode(JWT_KEY);
+        byte[] decodedKey = Base64.getDecoder().decode("SEWS");
         // 如果密钥长度不足，填充到 32 字节
         if (decodedKey.length < 32) {
             decodedKey = Arrays.copyOf(decodedKey, 32);
