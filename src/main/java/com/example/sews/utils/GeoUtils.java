@@ -15,8 +15,8 @@ import java.util.List;
 //@Component
 public class GeoUtils {
 
-//    @Value("${amap.api.key}")
-    private String apiKey="";
+    @Value("${amap.api.key}")
+    private String apiKey;
 
     private static final String AMAP_REVERSE_GEOCODE_URL = "https://restapi.amap.com/v3/geocode/regeo";
 
