@@ -29,10 +29,14 @@ public class LoginUser implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
         if (permissions == 1) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
             authorities.add(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"));
         } else if (permissions == 2) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }else if(permissions==3)   {
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         }
         return authorities;
     }

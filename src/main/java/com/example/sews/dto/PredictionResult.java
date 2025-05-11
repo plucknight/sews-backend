@@ -25,14 +25,8 @@ public class PredictionResult {
     @Column(name = "model_id")
     private Integer modelId;     // 模型编号
 
-    @Column(name = "start_date")
-    private Date startDate;      // 预测开始日期
-
-    @Column(name = "end_date")
-    private Date endDate;        // 预测结束日期（高峰日BP预测模型为NULL）
-
     @Column(name = "forecast_value")
-    private String forecastValue; // 预测结果（例如："50虫口/板"）
+    private String forecastValue; // 预测结果
 
     @Column(name = "data_time")
     private Date dataTime;       // 数据记录时间

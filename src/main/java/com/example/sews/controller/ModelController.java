@@ -15,7 +15,10 @@ public class ModelController {
     @Autowired
     private ModelInfoService modelInfoService;
 
-
+    @GetMapping("/peak-models")
+    public List<ModelInfo> getPeakDayModels() {
+        return modelInfoService.getPeakDayModels();
+    }
     // 获取所有模型信息
     @GetMapping("/getAllModels")
     public ResponseEntity<List<ModelInfo>> getAllModels() {
@@ -44,8 +47,9 @@ public class ModelController {
 
     // 更新模型信息
     @PostMapping("/update")
-    public ResponseEntity<ModelInfo> updateModel(@PathVariable Integer model_id, @RequestBody ModelInfo modelInfo) {
-        ModelInfo updatedModel = modelInfoService.updateModel(model_id, modelInfo);
+    public ResponseEntity<ModelInfo> updateModel( @RequestBody ModelInfo modelInfo) {
+        System.out.println("modelInfo = " + modelInfo);
+        ModelInfo updatedModel = modelInfoService.updateModel(modelInfo.getModelId(), modelInfo);
         if (updatedModel == null) {
             return ResponseEntity.notFound().build();
         }

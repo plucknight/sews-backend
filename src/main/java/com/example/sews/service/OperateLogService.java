@@ -19,7 +19,7 @@ public class OperateLogService {
     }
 
     // Find operate log by ID
-    public OperateLog findById(Long id) {
+    public OperateLog findById(Integer id) {
         return operateLogRepository.findById(id).orElse(null);
     }
 

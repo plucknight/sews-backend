@@ -1,5 +1,6 @@
 package com.example.sews.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +26,9 @@ public class ModelInfo {
     @Column(name = "model_type", nullable = false)
     private String modelType;  // 模型类型
 
+    @Column(name = "model_tip")
+    private String modelTip;  // 模型类型
+
     @Column(name = "model_version")
     private String modelVersion;  // 模型版本
 
@@ -34,5 +38,6 @@ public class ModelInfo {
 
     @Column(name = "data_time", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")  // 添加此行
     private Date dataTime;  // 数据记录时间
 }

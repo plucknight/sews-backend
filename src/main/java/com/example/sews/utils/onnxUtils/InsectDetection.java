@@ -4,23 +4,30 @@ import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
-import com.example.minio.util.MinioStaticUtils;
-import org.opencv.core.*;
+import com.example.sews.minio.util.MinioUtils;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.HttpURLConnection;
+import javax.annotation.PostConstruct;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.FloatBuffer;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.example.sews.minio.util.MinioUtils.ONNX_MODEL_BUCKET_NAME;
 
 
 /**
@@ -33,19 +40,41 @@ public class InsectDetection {
         nu.pattern.OpenCV.loadLocally();
     }
 
+    Map<String, OrtSession> onnxModels = new HashMap<>();
+    @Autowired
+    private MinioUtils minioUtils;
 
-    public static void main(String[] args) throws OrtException {
-        InsertDetection();
+    @PostConstruct
+    public void initModel() throws Exception {
+        try {
+            String modelTempDir = "/tmp/modeltemp/";
+            new File(modelTempDir).mkdirs();
+
+            System.out.println("===============加载onnx模型中===============" );
+            // 加载高峰模型
+            for (String onnxUrl : minioUtils.getOnnxList()) {
+                String fileName = onnxUrl.substring(onnxUrl.lastIndexOf('/') + 1);
+                OrtSession ortSession = minioUtils.initOnnxModelFromMinio(fileName);
+                onnxModels.put(fileName,ortSession);
+                System.out.println("加载onnx模型成功：" + fileName);
+            }
+
+            System.out.println("===============全部Onnx模型加载成功===============");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Onnx模型初始化失败");
+        }
     }
 
-    public static void InsertDetection() throws OrtException {
 
-        String model_path = "src\\main\\resources\\model\\best.onnx";
+    public String InsertDetection(String onnxFileName) throws Exception {
 
+//        String model_path = "src\\main\\resources\\model\\best.onnx";
         float confThreshold = 0.35F;
 
         float nmsThreshold = 0.55F;
 
+        Map<String, Integer> classCounts = new HashMap<>();
         //禁用并行处理
 //        System.setProperty("opencv.disable.parallel", "true");
 
@@ -53,7 +82,10 @@ public class InsectDetection {
         OrtEnvironment environment = OrtEnvironment.getEnvironment();
         OrtSession.SessionOptions sessionOptions = new OrtSession.SessionOptions();
         // 加载ONNX模型
-        OrtSession session = environment.createSession(model_path, sessionOptions);
+//        OrtSession session = environment.createSession(model_path, sessionOptions);
+
+        OrtSession session = onnxModels.get(onnxFileName);
+//        OrtSession session = minioUtils.initOnnxModelFromMinio(onnxFileName);
         // 新增您的自定义标签和颜色
         String[] labels = {"Grapholita molesta Busck",//李小
                 "Carposina sasakii Matsumura"//桃小
@@ -92,7 +124,7 @@ public class InsectDetection {
 //        String imagePath = "src/main/java/com/example/sews/utils/onnxUtils/images";
 
         List<String> list =
-                MinioStaticUtils.getImageList();
+                minioUtils.getImageList();
 //        list.forEach(System.out::println);
         for (String fileName : list) {
             Mat img = readImageFromURL(fileName);
@@ -102,6 +134,7 @@ public class InsectDetection {
             Mat image = img.clone();
             Imgproc.cvtColor(image, image, Imgproc.COLOR_BGR2RGB);
 
+            long startTime = System.currentTimeMillis();
 
             // 在这里先定义下框的粗细、字的大小、字的类型、字的颜色(按比例设置大小粗细比较好一些)
             int minDwDh = Math.min(img.width(), img.height());
@@ -183,6 +216,8 @@ public class InsectDetection {
                 for (float[] bbox : bboxes) {
                     String labelString = labels[label];
                     detections.add(new Detection(labelString, entry.getKey(), Arrays.copyOfRange(bbox, 0, 4), bbox[4]));
+
+                    classCounts.put(labelString, classCounts.getOrDefault(labelString, 0) + 1);
                 }
             }
 
@@ -215,13 +250,21 @@ public class InsectDetection {
             HighGui.imshow("Display Image", resizedImg);
 
             //保存到minio服务器
-            MinioStaticUtils.uploadImageToMinio(resizedImg, fileName);
+            minioUtils.uploadImageToMinio(resizedImg, fileName);
+
+            long endTime = System.currentTimeMillis();
+            System.out.println("识别时间：" + (endTime - startTime) + "ms");
+            System.out.println("------------------识别数量-----------------");
+            for (Map.Entry<String, Integer> entry : classCounts.entrySet()) {
+                System.out.println(entry.getKey() + ": " + entry.getValue());
+            }
             // 按任意按键关闭弹窗画面，结束程序
 //            HighGui.waitKey();
         }
-        HighGui.destroyAllWindows();
-        System.exit(0);
 
+//        HighGui.destroyAllWindows();
+//        System.exit(0);
+        return "ok";
     }
 
     //保存到本地

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -17,31 +18,24 @@ public class WeatherData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "weather_id")
-    private Integer weatherId;
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
+    @Column(name = "location_id", nullable = false)
+    private Integer locationId;
 
-    @Column(name = "device_id")
-    private Integer deviceId;
+    @Column(name = "date", nullable = false)
+    private LocalDate date;
 
+    @Column(name = "max_temp", nullable = false)
+    private Double maxTemp;
 
-    @Column(name = "temperature")
-    private Double temperature;
+    @Column(name = "min_temp", nullable = false)
+    private Double minTemp;
 
-    @Column(name = "humidity")
-    private Double humidity;
-
-    @Column(name = "precipitation")
+    @Column(name = "precipitation", nullable = false)
     private Double precipitation;
 
-    @Column(name = "radiation")
-    private Double radiation;
-
-    @Column(name = "wind_speed")
-    private Double windSpeed;
-
-    @Column(name = "data_time", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dataTime;
-
+    @Column(name = "humidity", nullable = false)
+    private Double humidity;
 }

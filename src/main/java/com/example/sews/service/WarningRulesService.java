@@ -59,8 +59,7 @@ public class WarningRulesService {
             WarningRules updatedRule = existingRule.get();
             updatedRule.setRuleName(warningRules.getRuleName());
             updatedRule.setDeviceType(warningRules.getDeviceType());
-            updatedRule.setWarningLevel(warningRules.getWarningLevel());
-            updatedRule.setThreshold(warningRules.getThreshold());
+            updatedRule.setWarningLevels(warningRules.getWarningLevels());
             updatedRule.setDescription(warningRules.getDescription());
             updatedRule.setIsActive(warningRules.getIsActive());
             updatedRule.setCreateTime(warningRules.getCreateTime());

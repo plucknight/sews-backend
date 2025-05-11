@@ -15,7 +15,9 @@ public class ModelInfoService {
     public ModelInfoService(ModelInfoRepository modelInfoRepository) {
         this.modelInfoRepository = modelInfoRepository;
     }
-
+    public List<ModelInfo> getPeakDayModels() {
+        return modelInfoRepository.findByModelType("1");
+    }
     /**
      * 获取所有模型信息
      *

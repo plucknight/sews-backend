@@ -2,11 +2,15 @@ package com.example.sews.controller;
 
 import com.example.sews.dto.vo.DevicePredictionDto;
 import com.example.sews.service.PredictionResultService;
+import com.example.sews.utils.bputils.BPModelInstance;
+import com.mathworks.toolbox.javabuilder.MWCharArray;
+import com.mathworks.toolbox.javabuilder.MWNumericArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 @RestController
@@ -14,7 +18,7 @@ import java.util.List;
 public class PredictionResultController {
 
     @Autowired
-    private  PredictionResultService predictionResultService;
+    private PredictionResultService predictionResultService;
 
     // 获取所有预测结果
     @GetMapping("/getAll")
@@ -23,12 +27,16 @@ public class PredictionResultController {
         return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
-//    // 根据设备ID获取预测结果
-//    @GetMapping("/device/{deviceId}")
-//    public ResponseEntity<List<PredictionResultDTO>> getPredictionResultsByDeviceId(@PathVariable Integer deviceId) {
-//        List<PredictionResultDTO> results = predictionResultService.getPredictionResultsByDeviceId(deviceId);
-//        return new ResponseEntity<>(results, HttpStatus.OK);
-//    }
+    //    // 根据设备ID获取预测结果
+    @GetMapping("/predict/{deviceId}")
+    public ResponseEntity<Double> getPrediction(@PathVariable int deviceId) {
+
+        double result = predictionResultService.predictShortTerm(deviceId);
+        return ResponseEntity.ok(result);
+    }
+
+
+
 
 //    // 根据模型ID获取预测结果
 //    @GetMapping("/model/{modelId}")

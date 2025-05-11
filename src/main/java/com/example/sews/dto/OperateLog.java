@@ -20,7 +20,7 @@ public class OperateLog {
     private Integer id; // 日志ID
 
     @Column(name = "admin_id")
-    private Integer admin; // 操作员ID，外键，指向`admin`表
+    private Integer adminId; // 操作员ID，外键，指向`admin`表
 
     @Column(name = "action", nullable = false)
     private String action; // 操作

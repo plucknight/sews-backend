@@ -1,14 +1,19 @@
 package com.example.sews.service;
 
 import com.example.sews.dto.WarningInfo;
+import com.example.sews.repo.AdminDeviceModelRepository;
 import com.example.sews.repo.WarningInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
 public class WarningInfoService {
+
+    @Autowired
+    private AdminDeviceModelRepository adminDeviceModelRepository;
 
     @Autowired
     private WarningInfoRepository warningInfoRepository;
@@ -26,6 +31,19 @@ public class WarningInfoService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public List<WarningInfo> findWarningsByAdminId(Integer adminId) {
+        // 1. 获取该管理员所有关联的设备ID
+        List<Integer> deviceIds = adminDeviceModelRepository.findDeviceIdsByAdminId(adminId);
+
+        // 2. 如果没有找到设备，返回空列表
+        if (deviceIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 3. 查询所有设备对应的预警信息
+        return warningInfoRepository.findByDeviceIdIn(deviceIds);
     }
 
     /**
@@ -78,4 +96,6 @@ public class WarningInfoService {
     public List<WarningInfo> getAllWarningInfo() {
         return warningInfoRepository.findAll();
     }
+
+
 }

@@ -26,11 +26,8 @@ public class WarningRules {
     @Column(name = "device_type")
     private String deviceType;  // 适用设备类型
 
-    @Column(name = "warning_level")
-    private String warningLevel;  // 预警级别
-
-    @Column(name = "threshold")
-    private Double threshold;  // 阈值
+    @Column(name = "warningLevels")
+    private String warningLevels;  // 阈值
 
     @Column(name = "description")
     private String description;  // 规则描述

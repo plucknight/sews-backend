@@ -18,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +28,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private AdminService adminService;
-
+    private Set<String> whiteList = Set.of(
+            "admin/login",
+            "map",
+            "prediction-results/getAll",
+            "warningRules/getAllWarningRules",
+            "monitoringPhoto/device"
+    );
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
@@ -44,10 +51,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 //        System.out.println("requestURL = " + requestURL);
         // 判断URL是否包含/login或/map
-        if ("admin/login".equals(path) || "map".equals(path)|| "prediction-results/getAll".equals(path)) {
-            // 如果包含，则直接执行chain.doFilter
+
+
+        if (whiteList.contains(path)) {
             chain.doFilter(request, response);
-            return ;
+            return;
         }
 //        //解析token
         String adminId = null;
@@ -58,7 +66,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             e.printStackTrace();
             throw new RuntimeException("token非法");
         }
-        Optional<Admin> admin =  adminService.findById(Long.parseLong(adminId));
+        Optional<Admin> admin =  adminService.findById(Integer.valueOf(adminId));
         LoginUser loginUser = new LoginUser(admin.get());
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());

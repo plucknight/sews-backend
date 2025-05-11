@@ -1,7 +1,9 @@
 package com.example.sews.controller;
 
 import com.example.sews.dto.Admin;
+import com.example.sews.dto.anno.LogOperation;
 import com.example.sews.service.AdminService;
+import com.example.sews.service.UserService;
 import com.example.sews.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,28 +22,22 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
+    @LogOperation("管理员登录")
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> loginAdmin(@RequestBody Map<String, String> credentials) {
         return adminService.login(credentials.get("username"), credentials.get("password"));
     }
+    @LogOperation("创建管理员")
     @PostMapping("/create")
     public ResponseEntity<Admin> createAdmin(@RequestBody Admin admin) {
         Admin savedAdmin = adminService.saveAdmin(admin);
         return ResponseEntity.ok(savedAdmin);
     }
-
-    @GetMapping("/id")
-    public ResponseEntity<Admin> getAdminById(HttpServletRequest request)  {
-        String token = request.getHeader("token");
-        String adminId;
-        try{
-            Claims claims = JwtUtil.parseJWT(token);
-            adminId = claims.getSubject();
-        }catch (Exception e){
-            throw new RuntimeException("Invalid token");
-        }
-        Optional<Admin> admin = adminService.findById(Long.valueOf(adminId));
-        return admin.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @LogOperation("更新管理员")
+    @PostMapping("/update")
+    public ResponseEntity<Admin> updateAdmin(@RequestBody Admin admin) {
+        Admin updatedAdmin = adminService.updateAdmin(admin);
+        return ResponseEntity.ok(updatedAdmin);
     }
 
     @GetMapping("/username/{username}")
@@ -50,14 +46,10 @@ public class AdminController {
         return admin != null ? ResponseEntity.ok(admin) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<Admin> updateAdmin(@RequestBody Admin admin) {
-        Admin updatedAdmin = adminService.updateAdmin(admin);
-        return ResponseEntity.ok(updatedAdmin);
-    }
+
 
     @GetMapping("/list")
-    public ResponseEntity<List<Admin>> deleteAdmin() {
+    public ResponseEntity<List<Admin>> getAllAdmin() {
         List<Admin> lists= adminService.getAllAdmin();
         if(lists.isEmpty()){
             return ResponseEntity.notFound().build();
@@ -65,9 +57,22 @@ public class AdminController {
             return ResponseEntity.ok(lists);
 
     }
+
+    @GetMapping("/userList")
+    public ResponseEntity<List<Admin>> userList() {
+        List<Admin> lists= adminService.getAllUser();
+        if(lists.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(lists);
+    }
+
+    @LogOperation("删除管理员")
     @GetMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteAdmin(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAdmin(@PathVariable Integer id) {
         adminService.deleteAdmin(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }

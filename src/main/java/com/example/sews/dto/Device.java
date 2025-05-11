@@ -18,6 +18,9 @@ public class Device {
     @Column(name = "deviceId")
     private Integer deviceId;
 
+    @Column(name = "location_id", nullable = false)
+    private Integer locationId;
+
     @Column(name = "device_name", nullable = false)
     private String deviceName;
 

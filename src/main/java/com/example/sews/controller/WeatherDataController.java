@@ -1,6 +1,7 @@
 package com.example.sews.controller;
 
 import com.example.sews.dto.WeatherData;
+import com.example.sews.dto.vo.WeatherDataDto;
 import com.example.sews.service.WeatherDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +24,22 @@ public class WeatherDataController {
     }
 
     // 查询设备的气象信息
-    @GetMapping("/device/{deviceId}")
-    public ResponseEntity<List<WeatherData>> getWeatherDataByDeviceId(@PathVariable("deviceId") int deviceId) {
-        List<WeatherData> weatherDataList = weatherDataService.getWeatherDataByDeviceId(deviceId);
+    @GetMapping("/location/{locationId}")
+    public ResponseEntity<List<WeatherData>> getWeatherDataByLocationId(@PathVariable("locationId") int locationId) {
+        List<WeatherData> weatherDataList = weatherDataService.getWeatherDataByLocationId(locationId);
         return ResponseEntity.ok(weatherDataList);
     }
 
     // 查询所有气象信息
     @GetMapping("/getAllWeatherData")
-    public ResponseEntity<List<WeatherData>> getAllWeatherData() {
-        List<WeatherData> allWeatherData = weatherDataService.getAllWeatherData();
+    public ResponseEntity<List<WeatherDataDto>> getAllWeatherData() {
+        List<WeatherDataDto> allWeatherData = weatherDataService.getAllWeatherDataWithLocation();
+        return ResponseEntity.ok(allWeatherData);
+    }
+
+    @GetMapping("/getWeatherDataByCounty/{county}")
+    public ResponseEntity<List<WeatherDataDto>> getWeatherDataByCounty(@PathVariable String county) {
+        List<WeatherDataDto> allWeatherData = weatherDataService.getWeatherDataByCounty(county);
         return ResponseEntity.ok(allWeatherData);
     }
 
@@ -41,5 +48,10 @@ public class WeatherDataController {
     public ResponseEntity<WeatherData> getWeatherDataById(@PathVariable("weatherId") int weatherId) {
         WeatherData weatherData = weatherDataService.getWeatherDataById(weatherId);
         return weatherData != null ? ResponseEntity.ok(weatherData) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/array")
+    public ResponseEntity<double[]> getArray() {
+        return ResponseEntity.ok(weatherDataService.getSegmentAveragesArray());
     }
 }

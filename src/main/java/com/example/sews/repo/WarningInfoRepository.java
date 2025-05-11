@@ -10,4 +10,5 @@ import java.util.List;
 public interface WarningInfoRepository extends JpaRepository<WarningInfo, Integer> {
     // 根据设备ID查询预警信息
     List<WarningInfo> findByDeviceId(Integer deviceId);
+    List<WarningInfo> findByDeviceIdIn(List<Integer> deviceIds);
 }
